@@ -17,6 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from django.shortcuts import redirect
+
+def home(request):
+    return redirect('/api/auth/login-page/')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,6 +29,7 @@ urlpatterns = [
     path('api/projects/', include('workspace.urls')),
     path('api/tasks/', include('workitems.urls')),
     path('api/auth/', include('users.urls')),
+    path('', home),
 ]
 
 
