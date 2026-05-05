@@ -24,7 +24,7 @@ button {width:100%;padding:10px;background:#6c5ce7;color:white;border:none;borde
 
 <p class="msg" id="msg"></p>
 
-<a href="/api/auth/login-page/">Login</a>
+<a href="/api/users/login-page/">Login</a>
 </div>
 
 <script>
@@ -34,7 +34,7 @@ function register(){
     const password = document.getElementById("password").value
     const full_name = document.getElementById("full_name").value
 
-    fetch("/api/auth/signup/",{
+    fetch("/api/users/signup/",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({
@@ -50,7 +50,7 @@ function register(){
     })
     .then(()=>{
         alert("Registered Successfully")
-        window.location.href="/api/auth/login-page/"
+        window.location.href="/api/users/login-page/"
     })
     .catch(e=>{
         document.getElementById("msg").innerText = e.message

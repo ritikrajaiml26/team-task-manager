@@ -22,7 +22,7 @@ button {width:100%;padding:10px;background:#0984e3;color:white;border:none;borde
 
 <p id="msg"></p>
 
-<a href="/api/auth/register-page/">Register</a>
+<a href="/api/users/register-page/">Register</a>
 </div>
 
 <script>
@@ -46,7 +46,7 @@ fetch("/api/auth/login/",{
     localStorage.setItem("token", data.access)
 
     // 🔥 USER INFO FETCH (role check)
-    return fetch("/api/auth/me/",{
+    return fetch("/api/users/me/",{
         headers:{
             "Authorization":"Bearer "+data.access
         }
@@ -59,9 +59,9 @@ fetch("/api/auth/login/",{
 
     // 🔥 ROLE BASED REDIRECT
     if(user.role === "Admin"){
-        window.location.href = "/api/auth/admin-dashboard-page/"
+        window.location.href = "/api/users/admin-dashboard-page/"
     } else {
-        window.location.href = "/api/auth/dashboard-page/"
+        window.location.href = "/api/users/dashboard-page/"
     }
 
 })

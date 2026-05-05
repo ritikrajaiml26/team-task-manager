@@ -4,14 +4,12 @@ from .views import (
     dashboard_page, UserInfoView,
     admin_dashboard_page, AllUsersView
 )
-from rest_framework_simplejwt.views import TokenObtainPairView
 
 urlpatterns = [
     # 🔹 API endpoints
-    path('signup/', RegisterView.as_view()),
-    path('login/', TokenObtainPairView.as_view()),
-    path('me/', UserInfoView.as_view()),
-    path('all-users/', AllUsersView.as_view()),   # ✅ ADD THIS
+    path('signup/', RegisterView.as_view()),        # POST /api/users/signup/
+    path('me/', UserInfoView.as_view()),             # GET  /api/users/me/
+    path('all-users/', AllUsersView.as_view()),      # GET  /api/users/all-users/
 
     # 🔹 HTML pages
     path('login-page/', login_page),

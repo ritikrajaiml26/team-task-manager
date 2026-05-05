@@ -97,6 +97,14 @@ class AdminDashboardView(APIView):
         users = User.objects.all()
         data = []
 
+        global_summary = {
+            "total_tasks": 0,
+            "todo": 0,
+            "in_progress": 0,
+            "done": 0,
+            "overdue": 0
+        }
+
         for user in users:
             tasks = Task.objects.filter(assigned_to=user)
 
@@ -104,6 +112,14 @@ class AdminDashboardView(APIView):
             done = tasks.filter(status="Done").count()
             progress = tasks.filter(status="In Progress").count()
             todo = tasks.filter(status="To Do").count()
+            overdue = tasks.filter(due_date__lt=timezone.now()).exclude(status="Done").count()
+
+            # Add to global summary
+            global_summary["total_tasks"] += total
+            global_summary["todo"] += todo
+            global_summary["in_progress"] += progress
+            global_summary["done"] += done
+            global_summary["overdue"] += overdue
 
             # 📊 progress %
             percent = (done / total * 100) if total > 0 else 0
@@ -116,10 +132,14 @@ class AdminDashboardView(APIView):
                 "done": done,
                 "in_progress": progress,
                 "todo": todo,
+                "overdue": overdue,
                 "progress": round(percent, 2)
             })
 
-        return Response(data)
+        return Response({
+            "global_summary": global_summary,
+            "users": data
+        })
     
 
 class UserTaskDetailView(APIView):
