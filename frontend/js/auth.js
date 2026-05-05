@@ -1,5 +1,5 @@
-// Update this to your deployed backend URL on Railway
-const BASE_URL = 'https://team-task-manager-production-8f4e.up.railway.app';
+// Auto-detect backend URL (works for both local and production)
+const BASE_URL = window.location.origin;
 
 async function submitLogin(role) {
   const username = document.getElementById('username').value.trim();
