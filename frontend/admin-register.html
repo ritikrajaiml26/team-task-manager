@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Registration | Team Task Manager</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <main class="container">
+    <div class="card form-card">
+      <h2>Admin Registration</h2>
+      <p class="hero-copy">Create your admin account to oversee team projects and task workflows.</p>
+      <input id="full_name" class="form-input" type="text" placeholder="Full Name">
+      <input id="username" class="form-input" type="text" placeholder="Admin username">
+      <input id="email" class="form-input" type="email" placeholder="Email address">
+      <input id="password" class="form-input" type="password" placeholder="Create password">
+      <div id="auth-error" class="form-error"></div>
+      <button class="btn btn-primary" onclick="submitRegister('Admin')">Register as Admin</button>
+      <p class="form-meta">Already have an admin account? <a href="admin-login.html">Login</a> or return to <a href="login.html">User login</a>.</p>
+    </div>
+  </main>
+  <script src="./js/auth.js"></script>
+</body>
+</html>

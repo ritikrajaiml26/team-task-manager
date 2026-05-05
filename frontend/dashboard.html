@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard | Team Task Manager</title>
+  <link rel="stylesheet" href="./css/styles.css">
+  <style>
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-box {
+      background: var(--bg-card);
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    .panel {
+      background: var(--bg-card);
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .task-card {
+      background: #11111184;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .task-details h4 {
+      margin: 0 0 0.25rem 0;
+      font-size: 1.1rem;
+    }
+
+    .task-meta {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      display: flex;
+      gap: 1rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+
+    .badge-Low {
+      background: #e0f2fe;
+      color: #0284c7;
+    }
+
+    .badge-Medium {
+      background: #fef9c3;
+      color: #ca8a04;
+    }
+
+    .badge-High {
+      background: #fee2e2;
+      color: #ef4444;
+    }
+
+    .status-select {
+      padding: 0.4rem;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary, #1a1f4b);
+      color: var(--text-primary, #ffffff);
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .status-select option {
+      background: var(--bg-primary, #0a0e27);
+      color: var(--text-primary, #ffffff);
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="nav">
+    <div class="nav-content" style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between;">
+      <div class="nav-logo">📋 TaskHub Member</div>
+      <div class="nav-links">
+        <span id="member-name" style="margin-right: 1rem; font-weight: 500;">User</span>
+        <button class="btn btn-secondary" onclick="logout()" style="padding: 0.4rem 1rem;">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container" style="max-width: 1200px; padding-top: 2rem;">
+
+    <!-- Personal Metrics -->
+    <div class="dashboard-grid" id="personal-stats">
+      <div class="stat-box">
+        <div class="stat-value" id="stat-total">0</div>
+        <div class="stat-label">Total Assigned</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="stat-todo">0</div>
+        <div class="stat-label">To Do</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="stat-progress">0</div>
+        <div class="stat-label">In Progress</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="stat-done">0</div>
+        <div class="stat-label">Completed</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" style="color:#ef4444;" id="stat-overdue">0</div>
+        <div class="stat-label">Overdue</div>
+      </div>
+    </div>
+
+    <!-- Assigned Tasks List -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3>My Assigned Tasks</h3>
+        <button class="btn btn-secondary" onclick="initMemberDashboard()"
+          style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">Refresh</button>
+      </div>
+
+      <div id="tasks-container">
+        <!-- Tasks will be injected here -->
+        <p class="form-meta">Loading tasks...</p>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="./js/auth.js"></script>
+  <script src="./js/member.js"></script>
+</body>
+
+</html>

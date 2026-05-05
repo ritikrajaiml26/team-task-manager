@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login | Team Task Manager</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <main class="container">
+    <div class="card form-card">
+      <h2>Admin Login</h2>
+      <p class="hero-copy">Sign in with your admin credentials to manage projects and team members.</p>
+      <input id="username" class="form-input" type="text" placeholder="Admin username">
+      <input id="password" class="form-input" type="password" placeholder="Password">
+      <div id="auth-error" class="form-error"></div>
+      <button class="btn btn-primary" onclick="submitLogin('Admin')">Login as Admin</button>
+      <p class="form-meta">Need an admin account? <a href="admin-register.html">Register</a> or go to <a href="login.html">User login</a>.</p>
+    </div>
+  </main>
+  <script src="./js/auth.js"></script>
+</body>
+</html>

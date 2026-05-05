@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Team Task Manager</title>
+  <link rel="stylesheet" href="./css/styles.css">
+  <style>
+    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-box { background: var(--bg-card); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border); text-align: center; }
+    .stat-value { font-size: 2rem; font-weight: bold; color: var(--primary); }
+    .stat-label { color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem; }
+    
+    .panel { background: var(--bg-card); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 2rem; }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+    
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { text-align: left; padding: 0.75rem; border-bottom: 1px solid var(--border); }
+    th { color: var(--text-secondary); font-weight: 600; }
+    
+    .badge { display: inline-block; padding: 0.25rem 0.5rem; border-radius: 999px; font-size: 0.75rem; font-weight: bold; }
+    .bg-red { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+    
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem; }
+    
+    .flex-gap { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-content" style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between;">
+      <div class="nav-logo">📊 TaskHub Admin</div>
+      <div class="nav-links">
+        <span id="admin-name" style="margin-right: 1rem; font-weight: 500;">Admin User</span>
+        <button class="btn btn-secondary" onclick="logout()" style="padding: 0.4rem 1rem;">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container" style="max-width: 1200px; padding-top: 2rem;">
+    
+    <!-- Global Metrics -->
+    <div class="dashboard-grid" id="global-stats">
+      <div class="stat-box"><div class="stat-value" id="stat-total">0</div><div class="stat-label">Total Tasks</div></div>
+      <div class="stat-box"><div class="stat-value" id="stat-todo">0</div><div class="stat-label">To Do</div></div>
+      <div class="stat-box"><div class="stat-value" id="stat-progress">0</div><div class="stat-label">In Progress</div></div>
+      <div class="stat-box"><div class="stat-value" id="stat-done">0</div><div class="stat-label">Completed</div></div>
+      <div class="stat-box"><div class="stat-value bg-red" style="background:transparent; display:inline;" id="stat-overdue">0</div><div class="stat-label">Overdue</div></div>
+    </div>
+
+    <div class="flex-gap">
+      <!-- Create Task / Project Panel -->
+      <div class="panel" style="flex: 1; min-width: 300px;">
+        <div class="panel-header">
+          <h3>Management</h3>
+        </div>
+        
+        <div style="margin-bottom: 1.5rem;">
+          <h4>1. Quick Create Project</h4>
+          <p class="form-meta">You need at least one project to create tasks.</p>
+          <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+            <input type="text" id="new-project-name" class="form-input" placeholder="Project Name" style="margin: 0;">
+            <button class="btn btn-primary" onclick="createProject()">Create</button>
+          </div>
+          <div id="project-msg" class="form-meta" style="margin-top: 0.5rem; color: #10b981;"></div>
+        </div>
+
+        <hr style="border:0; border-top: 1px solid var(--border); margin: 1.5rem 0;">
+
+        <div>
+          <h4>2. Assign New Task</h4>
+          <div class="form-group">
+            <label>Select Project</label>
+            <select id="task-project" class="form-input"></select>
+          </div>
+          <div class="form-group">
+            <label>Task Title</label>
+            <input type="text" id="task-title" class="form-input" placeholder="Enter task title...">
+          </div>
+          <div class="form-group">
+            <label>Assign To User</label>
+            <select id="task-user" class="form-input"></select>
+          </div>
+          <div class="flex-gap">
+            <div class="form-group" style="flex: 1;">
+              <label>Priority</label>
+              <select id="task-priority" class="form-input">
+                <option value="Low">Low</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="High">High</option>
+              </select>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>Due Date</label>
+              <input type="date" id="task-due" class="form-input">
+            </div>
+          </div>
+          <button class="btn btn-primary" style="width: 100%;" onclick="createTask()">Create & Assign Task</button>
+          <div id="task-msg" class="form-meta" style="margin-top: 0.5rem; color: #10b981;"></div>
+        </div>
+      </div>
+
+      <!-- Users Performance Panel -->
+      <div class="panel" style="flex: 2; min-width: 500px;">
+        <div class="panel-header">
+          <h3>Team Progress</h3>
+          <button class="btn btn-secondary" onclick="fetchAdminData()" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">Refresh Data</button>
+        </div>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Total</th>
+                <th>To Do</th>
+                <th>In Progress</th>
+                <th>Done</th>
+                <th>Overdue</th>
+                <th>Progress</th>
+              </tr>
+            </thead>
+            <tbody id="users-tbody">
+              <!-- Users will be injected here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+  
+  <script src="./js/auth.js"></script>
+  <script src="./js/admin.js"></script>
+</body>
+</html>

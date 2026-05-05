@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Registration | Team Task Manager</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <main class="container">
+    <div class="card form-card">
+      <h2>User Registration</h2>
+      <p class="hero-copy">Join your team and start managing tasks today.</p>
+      <input id="full_name" class="form-input" type="text" placeholder="Full Name">
+      <input id="username" class="form-input" type="text" placeholder="Username">
+      <input id="email" class="form-input" type="email" placeholder="Email address">
+      <input id="password" class="form-input" type="password" placeholder="Create password">
+      <div id="auth-error" class="form-error"></div>
+      <button class="btn btn-primary" onclick="submitRegister('Member')">Register as User</button>
+      <p class="form-meta">Already have an account? <a href="login.html">Login</a> or <a href="admin-register.html">Admin register</a>.</p>
+    </div>
+  </main>
+  <script src="./js/auth.js"></script>
+</body>
+</html>
