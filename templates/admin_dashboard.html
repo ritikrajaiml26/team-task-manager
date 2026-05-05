@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Panel</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #eef2f7;
+    padding: 20px;
+}
+
+/* HEADER */
+.header {
+    background: linear-gradient(135deg,#6c5ce7,#0984e3);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+/* GRID */
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* CARD */
+.card {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+/* FORM */
+input, select {
+    width: 100%;
+    padding: 8px;
+    margin: 6px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.delete {
+    background: red;
+    color: white;
+}
+
+.create {
+    background: green;
+    color: white;
+}
+
+.user-item {
+    padding: 6px;
+    cursor: pointer;
+}
+.user-item:hover {
+    background: #f1f2f6;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+    <h2>👑 Admin Panel</h2>
+</div>
+
+<div class="container">
+
+    <!-- USERS -->
+    <div class="card">
+        <h3>Users</h3>
+        <div id="users"></div>
+    </div>
+
+    <!-- TASKS -->
+    <div class="card">
+        <h3>User Tasks</h3>
+        <div id="tasks">👉 Click user to view tasks</div>
+    </div>
+
+</div>
+
+<!-- ASSIGN TASK -->
+<div class="card" style="margin-top:20px;">
+    <h3>➕ Assign Task</h3>
+
+    <input id="title" placeholder="Task Title">
+    <input id="desc" placeholder="Description">
+
+    <!-- ✅ Project ID FIX -->
+    <input id="project" placeholder="Enter Project ID">
+
+    <select id="user"></select>
+
+    <select id="priority">
+        <option value="Low">Low</option>
+        <option value="Medium">Medium</option>
+        <option value="High">High</option>
+    </select>
+
+    <input type="date" id="due">
+
+    <button onclick="createTask()" class="create">Create Task</button>
+</div>
+
+<script>
+const token = localStorage.getItem("token")
+
+// 🔐 redirect if not logged in
+if (!token) {
+    window.location.href = "/api/auth/login-page/"
+}
+
+// 🔥 LOAD USERS
+fetch("http://127.0.0.1:8000/api/auth/all-users/", {
+    headers: { "Authorization": "Bearer " + token }
+})
+.then(res => res.json())
+.then(data => {
+
+    let html = ""
+    let options = ""
+
+    data.forEach(u => {
+        html += `
+        <div class="user-item" onclick="loadTasks(${u.id})">
+            <b>${u.name || u.username}</b> (${u.email})
+        </div>
+        `
+
+        options += `<option value="${u.id}">${u.name || u.username}</option>`
+    })
+
+    document.getElementById("users").innerHTML = html
+    document.getElementById("user").innerHTML = options
+})
+
+
+// 🔥 LOAD USER TASKS
+function loadTasks(userId){
+
+    fetch(`http://127.0.0.1:8000/api/tasks/user-tasks/${userId}/`, {
+        headers: { "Authorization": "Bearer " + token }
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        let html = ""
+
+        if (data.length === 0) {
+            html = "<p>No tasks assigned</p>"
+        } else {
+            data.forEach(t => {
+                html += `
+                <div style="border-bottom:1px solid #ddd;padding:8px;">
+                    <b>${t.title}</b><br>
+                    Status: ${t.status}<br>
+                    Priority: ${t.priority}<br>
+
+                    <button onclick="deleteTask(${t.id})" class="delete">
+                        Delete
+                    </button>
+                </div>
+                `
+            })
+        }
+
+        document.getElementById("tasks").innerHTML = html
+    })
+}
+
+
+// 🔥 DELETE TASK
+function deleteTask(taskId){
+
+    fetch(`http://127.0.0.1:8000/api/tasks/${taskId}/delete/`, {
+        method: "DELETE",
+        headers: { "Authorization": "Bearer " + token }
+    })
+    .then(() => {
+        alert("Task Deleted ✅")
+        location.reload()
+    })
+}
+
+
+// 🔥 CREATE TASK
+function createTask(){
+
+    const data = {
+        title: document.getElementById("title").value,
+        description: document.getElementById("desc").value,
+        project: document.getElementById("project").value,
+        assigned_to: document.getElementById("user").value,
+        priority: document.getElementById("priority").value,
+        due_date: document.getElementById("due").value
+    }
+
+    fetch("http://127.0.0.1:8000/api/tasks/create/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify(data)
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Task Create Failed")
+        return res.json()
+    })
+    .then(() => {
+        alert("Task Assigned ✅")
+        location.reload()
+    })
+    .catch(err => alert(err.message))
+}
+
+</script>
+
+</body>
+</html>

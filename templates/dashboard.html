@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Member Dashboard</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #f1f2f6;
+    padding: 20px;
+}
+
+.header {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.card {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.task {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+}
+
+select {
+    padding: 5px;
+    margin-top: 5px;
+}
+
+.logout {
+    background: #636e72;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 👤 HEADER -->
+<div class="header">
+    <h2 id="welcome">Hello 👋</h2>
+</div>
+
+<!-- 📋 TASK LIST -->
+<div class="card">
+    <h3>Your Tasks</h3>
+    <div id="tasks"></div>
+</div>
+
+<button class="logout" onclick="logout()">Logout</button>
+
+<script>
+const token = localStorage.getItem("token")
+
+// 🔐 LOGIN CHECK
+if (!token) {
+    window.location.href = "/api/auth/login-page/"
+}
+
+// 👤 USER INFO
+fetch("/api/auth/me/", {
+    headers: {
+        "Authorization": "Bearer " + token
+    }
+})
+.then(res => res.json())
+.then(user => {
+    document.getElementById("welcome").innerText =
+        "Hello, " + (user.first_name || user.username) + " 👋"
+})
+
+
+// 📋 LOAD TASKS
+fetch("/api/tasks/", {
+    headers: {
+        "Authorization": "Bearer " + token
+    }
+})
+.then(res => res.json())
+.then(data => {
+
+    const container = document.getElementById("tasks")
+
+    if (data.length === 0) {
+        container.innerHTML = "<p>No tasks assigned</p>"
+        return
+    }
+
+    data.forEach(task => {
+
+        let div = document.createElement("div")
+        div.className = "task"
+
+        div.innerHTML = `
+            <p><b>${task.title}</b></p>
+            <small>${task.description || ""}</small><br>
+            <small>📅 ${task.due_date}</small><br>
+            <small>⚡ ${task.priority}</small><br>
+
+            <label>Status:</label><br>
+            <select onchange="updateStatus(${task.id}, this.value)">
+                <option value="To Do" ${task.status==="To Do"?"selected":""}>To Do</option>
+                <option value="In Progress" ${task.status==="In Progress"?"selected":""}>In Progress</option>
+                <option value="Done" ${task.status==="Done"?"selected":""}>Done</option>
+            </select>
+        `
+
+        container.appendChild(div)
+    })
+})
+
+
+// 🔄 UPDATE STATUS
+function updateStatus(taskId, newStatus){
+    fetch(`/api/tasks/${taskId}/`,{
+        method:"PATCH",
+        headers:{
+            "Content-Type":"application/json",
+            "Authorization":"Bearer "+token
+        },
+        body: JSON.stringify({
+            status: newStatus
+        })
+    })
+    .then(res=>{
+        if(!res.ok) throw new Error("Update Failed")
+        return res.json()
+    })
+    .then(()=>{
+        alert("Status Updated ✅")
+        location.reload()
+    })
+    .catch(err=>{
+        alert(err.message)
+    })
+}
+
+
+// 🚪 LOGOUT
+function logout(){
+    localStorage.clear()
+    window.location.href="/api/auth/login-page/"
+}
+</script>
+
+</body>
+</html>

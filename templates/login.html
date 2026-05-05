@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login</title>
+<style>
+body {font-family:Arial;background:#0984e3;display:flex;justify-content:center;align-items:center;height:100vh;}
+.box {background:white;padding:30px;border-radius:10px;width:300px;text-align:center;}
+input {width:100%;padding:10px;margin:8px 0;border:1px solid #ccc;border-radius:5px;}
+button {width:100%;padding:10px;background:#0984e3;color:white;border:none;border-radius:5px;}
+.msg {color:red;}
+</style>
+</head>
+
+<body>
+<div class="box">
+<h2>Login</h2>
+
+<input id="username" placeholder="Username">
+<input id="password" type="password" placeholder="Password">
+
+<button onclick="login()">Login</button>
+
+<p id="msg"></p>
+
+<a href="/api/auth/register-page/">Register</a>
+</div>
+
+<script>
+function login(){
+
+fetch("/api/auth/login/",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+        username:username.value,
+        password:password.value
+    })
+})
+.then(res=>{
+    if(!res.ok) throw new Error("Invalid Credentials")
+    return res.json()
+})
+.then(data=>{
+
+    // 🔐 token save
+    localStorage.setItem("token", data.access)
+
+    // 🔥 USER INFO FETCH (role check)
+    return fetch("/api/auth/me/",{
+        headers:{
+            "Authorization":"Bearer "+data.access
+        }
+    })
+})
+.then(res=>res.json())
+.then(user=>{
+
+    console.log("USER:", user)
+
+    // 🔥 ROLE BASED REDIRECT
+    if(user.role === "Admin"){
+        window.location.href = "/api/auth/admin-dashboard-page/"
+    } else {
+        window.location.href = "/api/auth/dashboard-page/"
+    }
+
+})
+.catch(err=>{
+    alert(err.message)
+})
+}
+</script>
+</body>
+</html>
