@@ -71,10 +71,16 @@ MIDDLEWARE = [
 ]
 
 # CORS Configuration
-CORS_ALLOWED_ORIGINS = os.getenv(
-    'CORS_ALLOWED_ORIGINS', 
-    'http://localhost:5500,http://127.0.0.1:5500'
-).split(',')
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5500',
+    'http://127.0.0.1:5500',
+    # Add your deployed frontend URL here when you get it
+]
+
+# Append from environment variable if it exists
+env_cors = os.getenv('CORS_ALLOWED_ORIGINS')
+if env_cors:
+    CORS_ALLOWED_ORIGINS.extend(env_cors.split(','))
 
 # Allow credentials in CORS requests
 CORS_ALLOW_CREDENTIALS = True
