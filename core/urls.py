@@ -17,12 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from django.shortcuts import redirect
-
-def home(request):
-    return redirect('/api/users/login-page/')
+from django.views.generic import TemplateView
 
 urlpatterns = [
+    path('', TemplateView.as_view(template_name='index.html'), name='home'),
     path('admin/', admin.site.urls),
     # JWT token endpoints
     path('api/auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -32,7 +30,6 @@ urlpatterns = [
     # Other apps
     path('api/projects/', include('workspace.urls')),
     path('api/tasks/', include('workitems.urls')),
-    path('', home),
 ]
 
 
